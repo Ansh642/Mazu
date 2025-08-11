@@ -2,17 +2,41 @@ import 'react-native-gesture-handler';
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import Intro from './src/screens/Intro';
+import Splash from './src/screens/Splash';
+import Intro1 from './src/screens/Intro1';
+import Intro2 from './src/screens/Intro2';
+import Intro3 from './src/screens/Intro3';
+import Intro4 from './src/screens/Intro4';
 
 const Stack = createStackNavigator();
 
 function App(): React.JSX.Element {
   return (
     <NavigationContainer>
-      <Stack.Navigator>
+      <Stack.Navigator initialRouteName="Splash">
         <Stack.Screen
-          name="Login"
-          component={Intro}
+          name="Splash"
+          component={Splash}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="Onboarding"
+          component={Intro1}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="Intro2"
+          component={Intro2}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="Intro3"
+          component={Intro3}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="Intro4"
+          component={Intro4}
           options={{ headerShown: false }}
         />
       </Stack.Navigator>

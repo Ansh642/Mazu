@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { View, Text, StyleSheet, StatusBar } from 'react-native';
-import { styles } from '../styles/Intro.styles';
+import { styles } from '../styles/Splash.styles';
 import { Svg, Path, Circle } from 'react-native-svg';
 
 
@@ -21,7 +21,14 @@ const Logo = ({ width, height }) => (
     </Svg>
 );
 
-const Intro = () => {
+const Splash = ({ navigation }) => {
+  useEffect(() => {
+    const timerId = setTimeout(() => {
+      navigation.replace('Onboarding');
+    }, 3000);
+
+    return () => clearTimeout(timerId);
+  }, [navigation]);
   return (
     <View style={styles.container}>
       <StatusBar barStyle="dark-content" />
@@ -34,4 +41,4 @@ const Intro = () => {
   );
 };
 
-export default Intro;
+export default Splash;

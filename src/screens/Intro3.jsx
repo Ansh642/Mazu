@@ -24,7 +24,7 @@ const Intro3 = ({ navigation }) => {
       
       <View style={styles.footer}>
         <View style={styles.paginationContainer}>
-          {/* Manually setting the third dot as active */}
+         
           <View style={styles.paginationDot} />
           <View style={styles.paginationDot} />
           <View style={[styles.paginationDot, styles.paginationDotActive]} />

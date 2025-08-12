@@ -7,6 +7,8 @@ import Intro1 from './src/screens/Intro1';
 import Intro2 from './src/screens/Intro2';
 import Intro3 from './src/screens/Intro3';
 import Intro4 from './src/screens/Intro4';
+import LoginScreen from './src/screens/auth/Login';
+import SignupScreen from './src/screens/auth/SignUp';
 
 const Stack = createStackNavigator();
 
@@ -37,6 +39,16 @@ function App(): React.JSX.Element {
         <Stack.Screen
           name="Intro4"
           component={Intro4}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="LoginScreen"
+          component={LoginScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="SignupScreen"
+          component={SignupScreen}
           options={{ headerShown: false }}
         />
       </Stack.Navigator>

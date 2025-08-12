@@ -1,6 +1,5 @@
 import React from 'react';
 import { View, Text, SafeAreaView, StatusBar, Image, Pressable } from 'react-native';
-// It uses the same shared stylesheet
 import { styles } from '../styles/Onboarding.styles';
 
 const Intro4 = ({ navigation }) => {
@@ -24,13 +23,12 @@ const Intro4 = ({ navigation }) => {
       
       <View style={styles.footer}>
         <View style={styles.paginationContainer}>
-          {/* Manually setting the fourth dot as active */}
           <View style={styles.paginationDot} />
           <View style={styles.paginationDot} />
           <View style={styles.paginationDot} />
           <View style={[styles.paginationDot, styles.paginationDotActive]} />
         </View>
-        <Pressable onPress={() => navigation.replace('Splash')} hitSlop={8}>
+        <Pressable onPress={() => navigation.replace('LoginScreen')} hitSlop={8}>
           <Text style={styles.getStartedButton}>Skip</Text>
         </Pressable>
       </View>

@@ -39,6 +39,8 @@ export const styles = StyleSheet.create({
     width: width * 0.80, 
     height: '75%', 
     resizeMode: 'contain',
+    marginLeft: 28,
+    marginTop: 24,
   },
   textContainer: {
     flex: 1, 

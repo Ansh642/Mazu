@@ -5,7 +5,8 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import Feather from 'react-native-vector-icons/Feather';
 import { styles } from '../../styles/Auth.styles';
-import { useAuth } from '../../redux/authContext';
+import { useDispatch } from 'react-redux';
+import { login } from '../../redux/slices/authSlice';
 import Toast from 'react-native-toast-message';
 
 const LoginScreen = ({navigation}) => {
@@ -24,17 +25,12 @@ const LoginScreen = ({navigation}) => {
   });
   const [rememberMe, setRememberMe] = useState(true);
   const [isPasswordSecure, setIsPasswordSecure] = useState(true);
-  const { signIn } = useAuth();
+  const dispatch = useDispatch();
 
   
   const onLoginPress = async (data) => {
-    try {
-      await signIn({ ...data, rememberMe });
-      Toast.show({ type: 'success', text1: 'Welcome back', text2: 'Logged in successfully.' });
-      navigation.reset({ index: 0, routes: [{ name: 'DashboardScreen' }] });
-    } catch (e) {
-      Toast.show({ type: 'error', text1: 'Login failed', text2: e?.message || 'Please try again.' });
-    }
+    dispatch(login({ ...data, rememberMe }));
+    Toast.show({ type: 'success', text1: 'Welcome back', text2: 'Logged in successfully.' });
   };
 
   return (

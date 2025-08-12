@@ -11,7 +11,8 @@ import {
 } from 'react-native';
 import Feather from 'react-native-vector-icons/Feather';
 import { styles } from '../../styles/Dashboard.styles';
-import { useAuth } from '../../redux/authContext';
+import { useDispatch, useSelector } from 'react-redux';
+import { logout } from '../../redux/slices/authSlice';
 
 const serviceCategories = [
   { id: '1', name: 'Cleaning', icon: 'wind' },
@@ -23,7 +24,8 @@ const serviceCategories = [
 ];
 
 const DashboardScreen = () => {
-  const { user, signOut } = useAuth();
+  const dispatch = useDispatch();
+  const user = useSelector((state) => state.auth.user);
   const displayName = (user?.email || 'User').split('@')[0] || 'User';
 
   const renderCategory = ({ item }) => (
@@ -46,7 +48,7 @@ const DashboardScreen = () => {
               <Text style={styles.welcomeTitle}>{`Hello ${displayName}`}</Text>
               <Text style={styles.welcomeSubtitle}>Find the best services near you</Text>
             </View>
-            <TouchableOpacity style={styles.avatar} onPress={signOut} accessibilityRole="button" accessibilityLabel="Log out">
+            <TouchableOpacity style={styles.avatar} onPress={() => dispatch(logout())} accessibilityRole="button" accessibilityLabel="Log out">
               <Feather name="log-out" size={22} color="#2A5CFF" />
             </TouchableOpacity>
           </View>

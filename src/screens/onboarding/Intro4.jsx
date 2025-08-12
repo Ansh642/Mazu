@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, SafeAreaView, StatusBar, Image, Pressable } from 'react-native';
-import { styles } from '../styles/Onboarding.styles';
+import { styles } from '../../styles/Onboarding.styles';
 
 const Intro4 = ({ navigation }) => {
   return (
@@ -10,7 +10,7 @@ const Intro4 = ({ navigation }) => {
       
       <View style={styles.contentWrapper}>
         <Image
-          source={require('../assets/images/onboarding4.png')}
+          source={require('../../assets/images/onboarding4.png')}
           style={styles.image}
         />
         <View style={styles.textContainer}>

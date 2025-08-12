@@ -1,27 +1,36 @@
 import React, { useState } from 'react';
-import {
-  View,
-  Text,
-  SafeAreaView,
-  TouchableOpacity,
-  ScrollView,
-  KeyboardAvoidingView,
-  Platform,
-  StatusBar,
-  TextInput,
-  Pressable,
-} from 'react-native';
+import {View,Text,SafeAreaView,TouchableOpacity,ScrollView,KeyboardAvoidingView,Platform,StatusBar,TextInput,Pressable,} from 'react-native';
 import { useForm, Controller } from 'react-hook-form';
 import Feather from 'react-native-vector-icons/Feather';
 import { styles } from '../../styles/Auth.styles';
+import request from 'superagent';
+import Toast from 'react-native-toast-message';
 
 const SignupScreen = ({navigation}) => {
-  const { control, handleSubmit, formState: { errors } } = useForm();
+  const { control, handleSubmit, formState: { errors }, reset } = useForm();
   const [isPasswordSecure, setIsPasswordSecure] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
 
-  // This function will be used later for API calls
-  const onSignupPress = (data) => {
-    console.log('Signup Data:', data);
+  
+  const onSignupPress = async (data) => {
+    setSubmitting(true);
+    Toast.show({ type: 'success', text1: 'Signup successful', text2: 'Your data was sent.' });
+    reset({ fullName: '', userName: '', email: '', password: '', contactNumber: '' });
+
+    request
+      .post('https://httpbin.org/post')
+      .set('Content-Type', 'application/json')
+      .timeout({ deadline: 2500 })
+      .send({
+        fullName: data?.fullName ?? '',
+        userName: data?.userName ?? '',
+        email: data?.email ?? '',
+        password: data?.password ?? '',
+        contactNumber: data?.contactNumber ?? '',
+      })
+      .catch(() => {});
+
+    setSubmitting(false);
   };
 
   return (

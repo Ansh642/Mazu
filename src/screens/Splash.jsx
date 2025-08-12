@@ -24,8 +24,10 @@ const Logo = ({ width, height }) => (
 const Splash = ({ navigation }) => {
   useEffect(() => {
     const timerId = setTimeout(() => {
+      // In the new navigator, Splash sits only in the AuthStack.
+      // If user stays in AuthStack, go to onboarding.
       navigation.replace('Onboarding');
-    }, 3000);
+    }, 1500);
 
     return () => clearTimeout(timerId);
   }, [navigation]);

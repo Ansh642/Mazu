@@ -154,4 +154,10 @@ export const styles = StyleSheet.create({
     justifyContent: 'center',
     marginHorizontal: 15,
   },
+  errorText: {
+    color: '#D63031',
+    fontSize: 13,
+    marginTop: -12,
+    marginBottom: 12,
+  },
 });

@@ -1,17 +1,40 @@
 import React, { useState } from 'react';
 import { View,Text,SafeAreaView,TouchableOpacity,ScrollView,KeyboardAvoidingView,Platform,StatusBar,TextInput,Pressable} from 'react-native';
 import { useForm, Controller } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import * as yup from 'yup';
 import Feather from 'react-native-vector-icons/Feather';
 import { styles } from '../../styles/Auth.styles';
+import { useAuth } from '../../redux/authContext';
+import Toast from 'react-native-toast-message';
 
 const LoginScreen = ({navigation}) => {
-  const { control, handleSubmit, formState: { errors } } = useForm();
+  const schema = yup.object().shape({
+    email: yup.string().email('Enter a valid email').required('Email is required'),
+    password: yup
+      .string()
+      .min(8, 'Password must be at least 8 characters')
+      .required('Password is required'),
+  });
+
+  const { control, handleSubmit, formState: { errors } } = useForm({
+    resolver: yupResolver(schema),
+    defaultValues: { email: '', password: '' },
+    mode: 'onTouched',
+  });
   const [rememberMe, setRememberMe] = useState(true);
   const [isPasswordSecure, setIsPasswordSecure] = useState(true);
+  const { signIn } = useAuth();
 
   
-  const onLoginPress = (data) => {
-    console.log('Login Data:', { ...data, rememberMe });
+  const onLoginPress = async (data) => {
+    try {
+      await signIn({ ...data, rememberMe });
+      Toast.show({ type: 'success', text1: 'Welcome back', text2: 'Logged in successfully.' });
+      navigation.reset({ index: 0, routes: [{ name: 'DashboardScreen' }] });
+    } catch (e) {
+      Toast.show({ type: 'error', text1: 'Login failed', text2: e?.message || 'Please try again.' });
+    }
   };
 
   return (
@@ -34,19 +57,22 @@ const LoginScreen = ({navigation}) => {
             control={control}
             name="email"
             render={({ field: { onChange, onBlur, value } }) => (
-              <View style={styles.inputContainer}>
-                <Feather name="mail" size={20} color="#8F8F8F" />
-                <TextInput
-                  style={styles.input}
-                  placeholder="Email Address"
-                  placeholderTextColor="#8F8F8F"
-                  onBlur={onBlur}
-                  onChangeText={onChange}
-                  value={value}
-                  keyboardType="email-address"
-                  autoCapitalize="none"
-                />
-              </View>
+              <>
+                <View style={styles.inputContainer}>
+                  <Feather name="mail" size={20} color="#8F8F8F" />
+                  <TextInput
+                    style={styles.input}
+                    placeholder="Email Address"
+                    placeholderTextColor="#8F8F8F"
+                    onBlur={onBlur}
+                    onChangeText={onChange}
+                    value={value}
+                    keyboardType="email-address"
+                    autoCapitalize="none"
+                  />
+                </View>
+                {errors.email && <Text style={styles.errorText}>{errors.email.message}</Text>}
+              </>
             )}
           />
 
@@ -55,25 +81,30 @@ const LoginScreen = ({navigation}) => {
             control={control}
             name="password"
             render={({ field: { onChange, onBlur, value } }) => (
-              <View style={styles.inputContainer}>
-                <Feather name="lock" size={20} color="#8F8F8F" />
-                <TextInput
-                  style={styles.input}
-                  placeholder="Password"
-                  placeholderTextColor="#8F8F8F"
-                  onBlur={onBlur}
-                  onChangeText={onChange}
-                  value={value}
-                  secureTextEntry={isPasswordSecure}
-                />
-                <TouchableOpacity onPress={() => setIsPasswordSecure(!isPasswordSecure)}>
-                  <Feather
-                    name={isPasswordSecure ? 'eye-off' : 'eye'}
-                    size={20}
-                    color="#8F8F8F"
+              <>
+                <View style={styles.inputContainer}>
+                  <Feather name="lock" size={20} color="#8F8F8F" />
+                  <TextInput
+                    style={styles.input}
+                    placeholder="Password"
+                    placeholderTextColor="#8F8F8F"
+                    onBlur={onBlur}
+                    onChangeText={onChange}
+                    value={value}
+                    secureTextEntry={isPasswordSecure}
                   />
-                </TouchableOpacity>
-              </View>
+                  <TouchableOpacity onPress={() => setIsPasswordSecure(!isPasswordSecure)}>
+                    <Feather
+                      name={isPasswordSecure ? 'eye-off' : 'eye'}
+                      size={20}
+                      color="#8F8F8F"
+                    />
+                  </TouchableOpacity>
+                </View>
+                {errors.password && (
+                  <Text style={styles.errorText}>{errors.password.message}</Text>
+                )}
+              </>
             )}
           />
 

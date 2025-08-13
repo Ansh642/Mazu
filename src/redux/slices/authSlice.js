@@ -8,7 +8,6 @@ const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
-    // State updates
     setUser: (state, action) => {
       state.user = action.payload || null;
     },
@@ -16,7 +15,6 @@ const authSlice = createSlice({
       state.user = null;
     },
 
-    // Trigger-only actions handled by saga
     login: (_state, _action) => {},
     logout: (_state) => {},
     restoreAuth: (_state) => {},

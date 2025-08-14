@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { View,Text,SafeAreaView,TouchableOpacity,ScrollView,KeyboardAvoidingView,Platform,StatusBar,TextInput,Pressable} from 'react-native';
+import { View,Text,TouchableOpacity,ScrollView,KeyboardAvoidingView,Platform,StatusBar,TextInput,Pressable} from 'react-native';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
@@ -26,6 +27,7 @@ const LoginScreen = ({navigation}) => {
   const [rememberMe, setRememberMe] = useState(true);
   const [isPasswordSecure, setIsPasswordSecure] = useState(true);
   const dispatch = useDispatch();
+  const insets = useSafeAreaInsets();
 
   
   const onLoginPress = async (data) => {
@@ -38,9 +40,17 @@ const LoginScreen = ({navigation}) => {
       <StatusBar barStyle="dark-content" />
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        keyboardVerticalOffset={insets.top}
         style={{ flex: 1 }}
       >
-        <ScrollView contentContainerStyle={styles.scrollContainer}>
+        <ScrollView
+          contentContainerStyle={styles.scrollContainer}
+          contentInsetAdjustmentBehavior="automatic"
+          contentInset={{ top: insets.top, bottom: insets.bottom }}
+          scrollIndicatorInsets={{ top: insets.top, bottom: insets.bottom }}
+          keyboardShouldPersistTaps="handled"
+          keyboardDismissMode={Platform.OS === 'ios' ? 'interactive' : 'on-drag'}
+        >
           <View style={styles.headerContainer}>
             <Text style={styles.title}>Hello Sara!</Text>
             <Text style={styles.subtitle}>

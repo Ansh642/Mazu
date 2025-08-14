@@ -30,7 +30,7 @@ const Intro3 = ({ navigation }) => {
           <View style={[styles.paginationDot, styles.paginationDotActive]} />
           <View style={styles.paginationDot} />
         </View>
-        <Pressable onPress={() => navigation.navigate('Intro4')} hitSlop={8}>
+        <Pressable onPress={() => navigation.navigate('LoginScreen')} hitSlop={8}>
           <Text style={styles.getStartedButton}>Skip</Text>
         </Pressable>
       </View>

@@ -45,7 +45,7 @@ export const styles = StyleSheet.create({
     backgroundColor: '#F7F7FB',
     borderRadius: 8,
     paddingHorizontal: 12,
-    marginBottom: 20,
+    marginBottom: 10,
     height: 55,
   },
   input: {

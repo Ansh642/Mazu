@@ -9,6 +9,7 @@ import {
   StatusBar,
   TextInput,
   Pressable,
+  Dimensions,
 } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useForm, Controller } from 'react-hook-form';
@@ -21,13 +22,13 @@ import { fetchStatesForCountry, fetchCitiesForCountryState } from '../../service
 import Toast from 'react-native-toast-message';
 
 // Memoized list item component
-const ListItem = React.memo(({ item, selected, onSelect }) => (
+const ListItem = React.memo(({ item, isSelected, onSelect }) => (
   <TouchableOpacity
     style={sheetStyles.listItem}
     onPress={() => onSelect(item)}
   >
-    <Text style={sheetStyles.listItemText}>{item}</Text>
-    {selected === item && (
+    <Text style={sheetStyles.listItemText} numberOfLines={1} ellipsizeMode="tail">{item}</Text>
+    {isSelected && (
       <Feather name="check" size={18} color="#5F60B9" />
     )}
   </TouchableOpacity>
@@ -46,8 +47,12 @@ const SignupScreen = ({ navigation }) => {
 
   const stateSheetRef = useRef(null);
   const citySheetRef = useRef(null);
-  const stateSnapPoints = useMemo(() => ['60%'], []);
-  const citySnapPoints = useMemo(() => ['60%'], []);
+  const SHEET_HEIGHT = useMemo(() => {
+    const h = Dimensions.get('window').height;
+    return Math.min(520, Math.round(h * 0.6));
+  }, []);
+  const stateSnapPoints = useMemo(() => [SHEET_HEIGHT], [SHEET_HEIGHT]);
+  const citySnapPoints = useMemo(() => [SHEET_HEIGHT], [SHEET_HEIGHT]);
   const selectedState = watch('state');
   const selectedCity = watch('city');
 
@@ -64,37 +69,40 @@ const SignupScreen = ({ navigation }) => {
   const closeStatePicker = useCallback(() => stateSheetRef.current?.dismiss(), []);
   const openCityPicker = useCallback(() => citySheetRef.current?.present(), []);
 
-  // Get average item height for better FlatList performance
   const getItemLayout = useCallback((data, index) => ({
-    length: 60, // average item height
-    offset: 60 * index,
+    length: 48,
+    offset: 48 * index,
     index,
   }), []);
 
-  // Memoized renderItem functions
+  
+  const handleStateSelect = useCallback((state) => {
+    setValue('state', state, { shouldDirty: true, shouldValidate: false });
+    setValue('city', '', { shouldDirty: true, shouldValidate: false });
+    setCities([]);
+    closeStatePicker();
+  }, [setValue, closeStatePicker]);
+
   const renderStateItem = useCallback(({ item }) => (
-    <ListItem 
-      item={item} 
-      selected={selectedState} 
-      onSelect={(state) => {
-        setValue('state', state, { shouldDirty: true, shouldValidate: false });
-        setValue('city', '', { shouldDirty: true, shouldValidate: false });
-        setCities([]);
-        closeStatePicker();
-      }}
+    <ListItem
+      item={item}
+      isSelected={item === selectedState}
+      onSelect={handleStateSelect}
     />
-  ), [selectedState]);
+  ), [selectedState, handleStateSelect]);
+
+  const handleCitySelect = useCallback((city) => {
+    setValue('city', city, { shouldDirty: true, shouldValidate: false });
+    citySheetRef.current?.dismiss();
+  }, [setValue]);
 
   const renderCityItem = useCallback(({ item }) => (
-    <ListItem 
-      item={item} 
-      selected={selectedCity} 
-      onSelect={(city) => {
-        setValue('city', city, { shouldDirty: true, shouldValidate: false });
-        citySheetRef.current?.dismiss();
-      }}
+    <ListItem
+      item={item}
+      isSelected={item === selectedCity}
+      onSelect={handleCitySelect}
     />
-  ), [selectedCity]);
+  ), [selectedCity, handleCitySelect]);
 
   
   const fetchStates = useCallback(async () => {
@@ -319,7 +327,10 @@ const SignupScreen = ({ navigation }) => {
       <BottomSheetModal
         ref={stateSheetRef}
         snapPoints={stateSnapPoints}
-        enablePanDownToClose
+        enablePanDownToClose={false}
+        enableHandlePanningGesture={false}
+        enableContentPanningGesture={false}
+        enableOverDrag={false}
         backdropComponent={renderBackdrop}
         topInset={insets.top}
         index={0}
@@ -330,13 +341,16 @@ const SignupScreen = ({ navigation }) => {
             data={states}
             keyExtractor={(item) => item}
             contentContainerStyle={{ paddingBottom: insets.bottom + 24 }}
-            initialNumToRender={15}
-            maxToRenderPerBatch={15}
-            windowSize={7}
-            removeClippedSubviews={true}
-            updateCellsBatchingPeriod={50}
-            getItemLayout={getItemLayout}
+            initialNumToRender={16}
+            maxToRenderPerBatch={16}
+            windowSize={8}
+            removeClippedSubviews={false}
+            updateCellsBatchingPeriod={16}
             bounces={false}
+            alwaysBounceVertical={false}
+            overScrollMode="never"
+            decelerationRate={0.6} // ⬅ slower scroll
+            scrollEventThrottle={16}
             keyboardShouldPersistTaps="handled"
             renderItem={renderStateItem}
             ListFooterComponent={<View style={{ height: insets.bottom + 8 }} />}
@@ -352,6 +366,7 @@ const SignupScreen = ({ navigation }) => {
               )
             }
           />
+
         </View>
       </BottomSheetModal>
 
@@ -359,39 +374,47 @@ const SignupScreen = ({ navigation }) => {
       <BottomSheetModal
         ref={citySheetRef}
         snapPoints={citySnapPoints}
-        enablePanDownToClose
+        enablePanDownToClose={false}
+        enableHandlePanningGesture={false}
+        enableContentPanningGesture={false}
+        enableOverDrag={false}
         backdropComponent={renderBackdrop}
         topInset={insets.top}
         index={0}
       >
         <View style={sheetStyles.sheetContainer}>
           <Text style={sheetStyles.sheetTitle}>{selectedState ? `Cities in ${selectedState}` : 'Select City'}</Text>
+
           <BottomSheetFlatList
-            data={cities}
-            keyExtractor={(item) => item}
-            contentContainerStyle={{ paddingBottom: insets.bottom + 24 }}
-            initialNumToRender={20}
-            maxToRenderPerBatch={20}
-            windowSize={8}
-            removeClippedSubviews={true}
-            updateCellsBatchingPeriod={50}
-            getItemLayout={getItemLayout}
-            bounces={false}
-            keyboardShouldPersistTaps="handled"
-            renderItem={renderCityItem}
-            ListFooterComponent={<View style={{ height: insets.bottom + 8 }} />}
-            ListEmptyComponent={
-              citiesLoading ? (
-                <View style={{ padding: 16 }}>
-                  <Text style={{ textAlign: 'center', color: '#8F8F8F' }}>Loading cities...</Text>
-                </View>
-              ) : (
-                <View style={{ padding: 16 }}>
-                  <Text style={{ textAlign: 'center', color: '#8F8F8F' }}>No cities found</Text>
-                </View>
-              )
-            }
-          />
+  data={cities}
+  keyExtractor={(item) => item}
+  contentContainerStyle={{ paddingBottom: insets.bottom + 24 }}
+  initialNumToRender={24}
+  maxToRenderPerBatch={24}
+  windowSize={10}
+  removeClippedSubviews={false}
+  updateCellsBatchingPeriod={50}
+  bounces={false}
+  alwaysBounceVertical={false}
+  overScrollMode="never"
+  decelerationRate={0.6} // ⬅ slower scroll
+  scrollEventThrottle={16}
+  keyboardShouldPersistTaps="handled"
+  renderItem={renderCityItem}
+  ListFooterComponent={<View style={{ height: insets.bottom + 8 }} />}
+  ListEmptyComponent={
+    citiesLoading ? (
+      <View style={{ padding: 16 }}>
+        <Text style={{ textAlign: 'center', color: '#8F8F8F' }}>Loading cities...</Text>
+      </View>
+    ) : (
+      <View style={{ padding: 16 }}>
+        <Text style={{ textAlign: 'center', color: '#8F8F8F' }}>No cities found</Text>
+      </View>
+    )
+  }
+/>
+
         </View>
       </BottomSheetModal>
       

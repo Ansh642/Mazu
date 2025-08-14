@@ -19,6 +19,7 @@ export const sheetStyles = StyleSheet.create({
     textAlign: 'center',
   },
   listItem: {
+    height: 48,
     paddingVertical: 12,
     paddingHorizontal: 12,
     flexDirection: 'row',
@@ -26,6 +27,7 @@ export const sheetStyles = StyleSheet.create({
     justifyContent: 'space-between',
     borderBottomWidth: 1,
     borderBottomColor: '#F0F0F0',
+    overflow: 'hidden',
   },
   listItemText: {
     fontSize: 15,
